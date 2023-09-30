@@ -15,8 +15,6 @@ const buildTree = function (arr) {
     } else {
       return null;
     }
-
-    // return new Node(arr[0] ? arr[0] : null, null, null);
   }
 
   let sortArr = [];
@@ -62,15 +60,53 @@ class Tree {
     }
   }
   delete(value) {
-    console.log(value);
-    //go through binary tree till you find the value from its parent
-    //if you found delete it from its parent
-    //else return not exitst
+    // console.log(value);
+    let current = this.root;
+    while (current) {
+      if (current.data === value) break;
+      if (current.data > value) {
+        if (current.left === null || current.left.data === value) {
+          if (current.left === null) {
+            console.log("Value not found");
+            return;
+          }
+          let delNode = current.left;
+          if (delNode.left) {
+            current.left = delNode.left;
+          }
+          if (delNode.right) {
+            current.right = delNode.right;
+          }
+
+          break;
+        }
+        current = current.left;
+      }
+      if (current.data < value) {
+        if (current.right === null || current.right.data === value) {
+          if (current.right === null) {
+            console.log("Value not found");
+            return;
+          }
+          let delNode = current.right;
+          if (delNode.right) {
+            current.right = delNode.right;
+          }
+          if (delNode.left) {
+            current.left = delNode.left;
+          }
+
+          break;
+        }
+
+        current = current.right;
+      }
+    }
+    console.log(current);
   }
 }
 
 const tree = new Tree(array);
-tree.delete(9);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
