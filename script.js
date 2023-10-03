@@ -60,40 +60,50 @@ class Tree {
     }
   }
   delete(value) {
-    // console.log(value);
     let current = this.root;
     while (current) {
       if (current.data === value) break;
-      if (current.data > value) {
+      if (value < current.data) {
         if (current.left === null || current.left.data === value) {
           if (current.left === null) {
             console.log("Value not found");
             return;
           }
           let delNode = current.left;
-          if (delNode.left) {
-            current.left = delNode.left;
+          if (delNode.left && !delNode.right) {
+            current.right = delNode.left;
           }
-          if (delNode.right) {
-            current.right = delNode.right;
+          if (delNode.right && !delNode.left) {
+            current.left = delNode.right;
+          }
+          if (delNode.left && delNode.right) {
+            let replaceNode = delNode.right;
+            while (replaceNode.left) {
+              replaceNode = replaceNode.left;
+            }
+            delNode.right.left = replaceNode.left;
+            replaceNode.right = delNode.right;
+            replaceNode.left = delNode.left;
+            current.left = replaceNode;
           }
 
           break;
         }
         current = current.left;
       }
-      if (current.data < value) {
+      if (value > current.data) {
         if (current.right === null || current.right.data === value) {
           if (current.right === null) {
             console.log("Value not found");
             return;
           }
           let delNode = current.right;
+          console.log(delNode);
           if (delNode.right) {
-            current.right = delNode.right;
+            current.left = delNode.right;
           }
           if (delNode.left) {
-            current.left = delNode.left;
+            current.right = delNode.left;
           }
 
           break;
@@ -102,11 +112,11 @@ class Tree {
         current = current.right;
       }
     }
-    console.log(current);
   }
 }
 
 const tree = new Tree(array);
+tree.delete(4);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
