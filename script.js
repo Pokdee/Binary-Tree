@@ -59,10 +59,42 @@ class Tree {
       }
     }
   }
+  removeNodeMultiChild(delNode) {
+    let replaceNodePar = delNode.right;
+    let replaceNode = replaceNodePar.left;
+    while (replaceNode.left) {
+      replaceNodePar = replaceNode;
+      replaceNode = replaceNode.left;
+    }
+
+    replaceNodePar.left = replaceNode.left;
+    replaceNode.right = delNode.right;
+    replaceNode.left = delNode.left;
+    return replaceNode;
+  }
   delete(value) {
+    if (!value) {
+      // console.log("Invalid");
+      return;
+    }
+    if (this.root.data === value) {
+      let delNode = this.root;
+      let replaceNodePar = delNode.right;
+      let replaceNode = replaceNodePar.left;
+      while (replaceNode.left) {
+        replaceNodePar = replaceNode;
+        replaceNode = replaceNode.left;
+      }
+
+      this.root = replaceNode;
+      replaceNodePar.left = replaceNode.left;
+      replaceNode.right = delNode.right;
+      replaceNode.left = delNode.left;
+
+      return;
+    }
     let current = this.root;
     while (current) {
-      if (current.data === value) break;
       if (value < current.data) {
         if (current.left === null || current.left.data === value) {
           if (current.left === null) {
@@ -71,20 +103,16 @@ class Tree {
           }
           let delNode = current.left;
           if (delNode.left && !delNode.right) {
-            current.right = delNode.left;
+            current.left = delNode.left;
           }
           if (delNode.right && !delNode.left) {
-            current.left = delNode.right;
+            current.right = delNode.right;
           }
           if (delNode.left && delNode.right) {
-            let replaceNode = delNode.right;
-            while (replaceNode.left) {
-              replaceNode = replaceNode.left;
-            }
-            delNode.right.left = replaceNode.left;
-            replaceNode.right = delNode.right;
-            replaceNode.left = delNode.left;
-            current.left = replaceNode;
+            current.left = this.removeNodeMultiChild(delNode);
+          }
+          if (!delNode.left && !delNode.right) {
+            current.left = null;
           }
 
           break;
@@ -99,11 +127,17 @@ class Tree {
           }
           let delNode = current.right;
           console.log(delNode);
-          if (delNode.right) {
+          if (delNode.right && !delNode.left) {
             current.left = delNode.right;
           }
-          if (delNode.left) {
+          if (delNode.left && !delNode.right) {
             current.right = delNode.left;
+          }
+          if (delNode.left && delNode.right) {
+            current.right = this.removeNodeMultiChild(delNode);
+          }
+          if (!delNode.left && !delNode.right) {
+            current.right = null;
           }
 
           break;
@@ -116,7 +150,6 @@ class Tree {
 }
 
 const tree = new Tree(array);
-tree.delete(4);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
