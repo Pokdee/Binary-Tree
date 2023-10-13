@@ -8,6 +8,7 @@ class Node {
 
 const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 
+//fn to build bn tree
 const buildTree = function (arr) {
   if (arr.length <= 1) {
     if (arr[0]) {
@@ -34,10 +35,13 @@ const buildTree = function (arr) {
   return new Node(mid, buildTree(leftHalf), buildTree(rightHalf));
 };
 
+//tree class
 class Tree {
   constructor(arr) {
     this.root = buildTree(arr);
   }
+
+  //add node to tree
   insert(value) {
     let current = this.root;
     while (current) {
@@ -59,6 +63,8 @@ class Tree {
       }
     }
   }
+
+  //fn remove node with double child node
   removeNodeMultiChild(delNode) {
     let replaceNodePar = delNode.right;
     let replaceNode = replaceNodePar.left;
@@ -72,11 +78,13 @@ class Tree {
     replaceNode.left = delNode.left;
     return replaceNode;
   }
+
+  //delete node from tree
   delete(value) {
     if (!value) {
-      // console.log("Invalid");
       return;
     }
+    //if value equal to root data
     if (this.root.data === value) {
       let delNode = this.root;
       let replaceNodePar = delNode.right;
@@ -95,6 +103,7 @@ class Tree {
     }
     let current = this.root;
     while (current) {
+      ///if value smaller than node data
       if (value < current.data) {
         if (current.left === null || current.left.data === value) {
           if (current.left === null) {
@@ -119,6 +128,7 @@ class Tree {
         }
         current = current.left;
       }
+      //if value greater then node data
       if (value > current.data) {
         if (current.right === null || current.right.data === value) {
           if (current.right === null) {
@@ -147,10 +157,53 @@ class Tree {
       }
     }
   }
+  //find node
+  find(value) {
+    let current = this.root;
+    while (current && current.data !== value) {
+      if (value > current.data) {
+        current = current.right;
+      }
+      if (value < current.data) {
+        current = current.left;
+      }
+    }
+    if (current) {
+      return current;
+    }
+    return "node does not exist";
+  }
+  //breath first traversal
+  breadthFirst(node) {
+    let queue = [];
+    let visited = [];
+
+    queue.push(node);
+
+    while (queue.length > 0) {
+      let node = queue.shift();
+      if (node.left && node.right) {
+        queue.push(node.left);
+        queue.push(node.right);
+      }
+      if (node.left && !node.right) {
+        queue.push(node.left);
+      }
+      visited.push(node.data);
+    }
+    return visited;
+  }
+
+  //breath first traversal output
+  levelOrder() {
+    console.log(this.breadthFirst(this.root));
+  }
 }
 
 const tree = new Tree(array);
+tree.levelOrder();
 
+////
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
     return;
