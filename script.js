@@ -175,6 +175,7 @@ class Tree {
   }
   //breath first traversal
   breadthFirst(node) {
+    if (!node) return;
     let queue = [];
     let visited = [];
 
@@ -189,21 +190,60 @@ class Tree {
       if (node.left && !node.right) {
         queue.push(node.left);
       }
+      if (node.right && !node.left) {
+        queue.push(node.right);
+      }
       visited.push(node.data);
     }
     return visited;
   }
 
   //breath first traversal output
-  levelOrder() {
-    console.log(this.breadthFirst(this.root));
+  levelOrder(node) {
+    return node;
+  }
+
+  //Depth first PreOrder   //L D R
+  inOrdertreversal(node) {
+    if (!node) return;
+
+    if (!node.left && !node.right) {
+      return node;
+    }
+
+    let stack = [];
+
+    if (node.left && node.right) {
+      stack.push(node);
+      stack.push(...this.inOrdertreversal(node.left));
+    }
+    if (node.left && !node.right) {
+      stack.push(node);
+
+      stack.push(this.inOrdertreversal(node.left));
+    }
+
+    while (stack.length > 0) {
+      let n = stack.pop();
+      console.log(n.data);
+      if (n.right) {
+        stack.push(this.inOrdertreversal(n.right));
+      }
+    }
+
+    return stack;
+  }
+
+  //PreOrder Output
+  inorder() {
+    console.log(this.inOrdertreversal(this.root));
   }
 }
 
 const tree = new Tree(array);
-tree.levelOrder();
+tree.inorder();
 
-////
+////Tree printing method
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
     return;
