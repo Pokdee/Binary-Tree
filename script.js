@@ -203,8 +203,8 @@ class Tree {
     return node;
   }
 
-  //Depth first PreOrder   //L D R
-  inOrdertreversal(node) {
+  //Depth first inOrder   //L D R
+  #inOrdertreversal(node) {
     if (!node) return;
 
     if (!node.left && !node.right) {
@@ -215,33 +215,101 @@ class Tree {
 
     if (node.left && node.right) {
       stack.push(node);
-      stack.push(...this.inOrdertreversal(node.left));
+      stack.push(...this.#inOrdertreversal(node.left));
     }
     if (node.left && !node.right) {
       stack.push(node);
 
-      stack.push(this.inOrdertreversal(node.left));
+      stack.push(this.#inOrdertreversal(node.left));
     }
 
+    let data = [];
     while (stack.length > 0) {
       let n = stack.pop();
-      console.log(n.data);
+      if (n.length !== 0) {
+        data.push(n.data);
+        console.log(n.data);
+      }
+
       if (n.right) {
-        stack.push(this.inOrdertreversal(n.right));
+        stack.push(this.#inOrdertreversal(n.right));
       }
     }
 
     return stack;
   }
 
-  //PreOrder Output
-  inorder() {
-    console.log(this.inOrdertreversal(this.root));
+  //inOrder Output
+  inOrder() {
+    this.#inOrdertreversal(this.root);
+  }
+
+  //postOrder       //L R D
+  #postOrderTraversal(node) {
+    if (!node) return;
+
+    if (!node.right && !node.left) {
+      return node;
+    }
+
+    let stack = [];
+    stack.push(node);
+
+    if (node.left && node.right) {
+      stack.push(...this.#postOrderTraversal(node.left));
+    }
+    if (node.left && !node.right) {
+      stack.push(this.#postOrderTraversal(node.left));
+    }
+    if (node.right && !node.left) {
+      stack.push(this.#postOrderTraversal(node.right));
+    }
+
+    while (stack.length !== 0) {
+      let n = stack.pop();
+      if (!n.right && n.data) {
+        console.log(n.data);
+      }
+      if (n.right) {
+        stack.push(this.#postOrderTraversal(n.right));
+        console.log(n.data);
+      }
+    }
+    return stack;
+  }
+
+  //postOrder output
+  postOrder() {
+    this.#postOrderTraversal(this.root);
+  }
+
+  //preOrder traversal  //D L R
+  #preOrderTraversal(node) {
+    if (!node) return;
+
+    if (!node.right && !node.left) {
+      return node;
+    }
+
+    let stack = [];
+
+    stack.push(node);
+    if (node.right && node.left) {
+      stack.push(...this.#preOrderTraversal(node.left));
+      stack.push(...this.#preOrderTraversal(node.right));
+    }
+
+    return stack;
+  }
+
+  //preOrder
+  preOrder() {
+    console.log(this.#preOrderTraversal(this.root));
   }
 }
 
 const tree = new Tree(array);
-tree.inorder();
+tree.preOrder();
 
 ////Tree printing method
 const prettyPrint = (node, prefix = "", isLeft = true) => {
