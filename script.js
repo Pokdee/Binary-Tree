@@ -208,7 +208,7 @@ class Tree {
     if (!node) return;
 
     if (!node.left && !node.right) {
-      return node;
+      return [node];
     }
 
     let stack = [];
@@ -220,7 +220,7 @@ class Tree {
     if (node.left && !node.right) {
       stack.push(node);
 
-      stack.push(this.#inOrdertreversal(node.left));
+      stack.push(...this.#inOrdertreversal(node.left));
     }
 
     let data = [];
@@ -232,7 +232,7 @@ class Tree {
       }
 
       if (n.right) {
-        stack.push(this.#inOrdertreversal(n.right));
+        stack.push(...this.#inOrdertreversal(n.right));
       }
     }
 
@@ -249,7 +249,7 @@ class Tree {
     if (!node) return;
 
     if (!node.right && !node.left) {
-      return node;
+      return [node];
     }
 
     let stack = [];
@@ -259,10 +259,10 @@ class Tree {
       stack.push(...this.#postOrderTraversal(node.left));
     }
     if (node.left && !node.right) {
-      stack.push(this.#postOrderTraversal(node.left));
+      stack.push(...this.#postOrderTraversal(node.left));
     }
     if (node.right && !node.left) {
-      stack.push(this.#postOrderTraversal(node.right));
+      stack.push(...this.#postOrderTraversal(node.right));
     }
 
     while (stack.length !== 0) {
@@ -271,7 +271,7 @@ class Tree {
         console.log(n.data);
       }
       if (n.right) {
-        stack.push(this.#postOrderTraversal(n.right));
+        stack.push(...this.#postOrderTraversal(n.right));
         console.log(n.data);
       }
     }
@@ -287,24 +287,30 @@ class Tree {
   #preOrderTraversal(node) {
     if (!node) return;
 
-    if (!node.right && !node.left) {
-      return node;
+    if (!node.left && !node.right) {
+      console.log(node.data);
+      return;
     }
-
     let stack = [];
 
-    stack.push(node);
-    if (node.right && node.left) {
-      stack.push(...this.#preOrderTraversal(node.left));
-      stack.push(...this.#preOrderTraversal(node.right));
+    if (node.left && node.right) {
+      console.log(node.data);
+      this.#preOrderTraversal(node.left);
+      this.#preOrderTraversal(node.right);
     }
-
-    return stack;
+    if (node.left && !node.right) {
+      console.log(node.data);
+      this.#preOrderTraversal(node.left);
+    }
+    if (!node.left && node.right) {
+      console.log(node.data);
+      this.#preOrderTraversal(node.right);
+    }
   }
 
   //preOrder
   preOrder() {
-    console.log(this.#preOrderTraversal(this.root));
+    this.#preOrderTraversal(this.root);
   }
 }
 
