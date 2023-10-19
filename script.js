@@ -164,14 +164,17 @@ class Tree {
       if (value > current.data) {
         current = current.right;
       }
-      if (value < current.data) {
-        current = current.left;
+
+      if (current) {
+        if (value < current.data) {
+          current = current.left;
+        }
       }
     }
     if (current) {
       return current;
     }
-    return "node does not exist";
+    return null;
   }
   //breath first traversal
   breadthFirst(node) {
@@ -291,7 +294,6 @@ class Tree {
       console.log(node.data);
       return;
     }
-    let stack = [];
 
     if (node.left && node.right) {
       console.log(node.data);
@@ -312,10 +314,54 @@ class Tree {
   preOrder() {
     this.#preOrderTraversal(this.root);
   }
+
+  //height
+  height(node) {
+    if (!node.left && !node.right) {
+      return 0;
+    }
+
+    let height = 0;
+
+    if (node.left && node.right) {
+      height = Math.max(this.height(node.left), this.height(node.right)) + 1;
+    }
+    if (node.left && !node.right) {
+      height = Math.max(this.height(node.left), -1) + 1;
+    }
+    if (node.right && !node.left) {
+      height = Math.max(this.height(node.right), -1) + 1;
+    }
+
+    return height;
+  }
+
+  //depth
+  depth(node) {
+    if (!node) return null;
+    let current = this.root;
+    let depth = 0;
+    while (current && current.data !== node.data) {
+      if (node.data > current.data) {
+        depth++;
+        current = current.right;
+      }
+      if (node.data < current.data) {
+        depth++;
+        current = current.left;
+      }
+    }
+    if (current) {
+      return depth;
+    } else {
+      return "node doesn't exist";
+    }
+  }
 }
 
 const tree = new Tree(array);
-tree.preOrder();
+let node = tree.find(3);
+console.log(tree.depth(node));
 
 ////Tree printing method
 const prettyPrint = (node, prefix = "", isLeft = true) => {
