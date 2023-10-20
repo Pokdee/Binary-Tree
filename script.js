@@ -317,22 +317,14 @@ class Tree {
 
   //height
   height(node) {
-    if (!node.left && !node.right) {
-      return 0;
+    if (node === null) {
+      return -1;
     }
 
-    let height = 0;
+    let leftHei = this.height(node.left);
+    let rightHei = this.height(node.right);
 
-    if (node.left && node.right) {
-      height = Math.max(this.height(node.left), this.height(node.right)) + 1;
-    }
-    if (node.left && !node.right) {
-      height = Math.max(this.height(node.left), -1) + 1;
-    }
-    if (node.right && !node.left) {
-      height = Math.max(this.height(node.right), -1) + 1;
-    }
-
+    let height = Math.max(leftHei, rightHei) + 1;
     return height;
   }
 
@@ -354,14 +346,42 @@ class Tree {
     if (current) {
       return depth;
     } else {
-      return "node doesn't exist";
+      return null;
     }
+  }
+
+  // check balanced
+  isBalanced(node) {
+    if (node === null) {
+      return -1;
+    }
+
+    let left = this.isBalanced(node.left);
+    let right = this.isBalanced(node.right);
+    let HeiDiff;
+    if (!Number.isNaN(left) || !Number.isNaN(right)) {
+      HeiDiff = Math.abs(left - right);
+    }
+
+    // console.log(node);
+    // console.log(`(${node.data}) ${left} - ${right} => `, HeiDiff);
+
+    if (HeiDiff >= 2) {
+      let height = Math.max(left, right) + 1;
+
+      return height;
+    }
+    return "not balance";
   }
 }
 
 const tree = new Tree(array);
-let node = tree.find(3);
-console.log(tree.depth(node));
+
+tree.insert(24);
+tree.insert(25);
+tree.insert(26);
+
+console.log(tree.isBalanced(tree.root));
 
 ////Tree printing method
 const prettyPrint = (node, prefix = "", isLeft = true) => {
