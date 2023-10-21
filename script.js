@@ -356,30 +356,34 @@ class Tree {
       return -1;
     }
 
-    let left = this.isBalanced(node.left);
-    let right = this.isBalanced(node.right);
-    let HeiDiff;
-    if (!Number.isNaN(left) || !Number.isNaN(right)) {
-      HeiDiff = Math.abs(left - right);
+    let leftHei, rightHei;
+    let height, heiDiff;
+
+    //we get heights from here
+    leftHei = this.isBalanced(node.left);
+    if (Number.isInteger(leftHei)) {
+      rightHei = this.isBalanced(node.right);
+    }
+    if (Number.isInteger(rightHei)) {
+      height = Math.max(leftHei, rightHei) + 1;
+      heiDiff = Math.abs(leftHei - rightHei);
     }
 
-    // console.log(node);
-    // console.log(`(${node.data}) ${left} - ${right} => `, HeiDiff);
+    if (heiDiff > 1) {
+      return;
+    }
 
-    if (HeiDiff >= 2) {
-      let height = Math.max(left, right) + 1;
-
+    if (Number.isInteger(height) && node === this.root) {
+      return "The tree is balanced 😊";
+    }
+    if (Number.isInteger(height)) {
       return height;
     }
-    return "not balance";
+    return "The tree is not balanced ⚠️";
   }
 }
 
 const tree = new Tree(array);
-
-tree.insert(24);
-tree.insert(25);
-tree.insert(26);
 
 console.log(tree.isBalanced(tree.root));
 
