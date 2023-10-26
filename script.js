@@ -1,3 +1,18 @@
+////Tree printing method
+const prettyPrint = (node, prefix = "", isLeft = true) => {
+  if (node === null) {
+    return;
+  }
+  if (node.right !== null) {
+    prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+  }
+  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
+  if (node.left !== null) {
+    prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+  }
+};
+// ///
+
 class Node {
   constructor(data, left, right) {
     this.data = data;
@@ -5,8 +20,6 @@ class Node {
     this.right = right;
   }
 }
-
-const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 
 //fn to build bn tree
 const buildTree = function (arr) {
@@ -136,7 +149,6 @@ class Tree {
             return;
           }
           let delNode = current.right;
-          console.log(delNode);
           if (delNode.right && !delNode.left) {
             current.left = delNode.right;
           }
@@ -202,8 +214,8 @@ class Tree {
   }
 
   //breath first traversal output
-  levelOrder(node) {
-    return node;
+  levelOrder() {
+    console.log(this.breadthFirst(this.root));
   }
 
   //Depth first inOrder   //L D R
@@ -211,32 +223,23 @@ class Tree {
     if (!node) return;
 
     if (!node.left && !node.right) {
-      return [node];
+      return [node.data];
     }
 
     let stack = [];
 
     if (node.left && node.right) {
-      stack.push(node);
+      stack.push(...this.#inOrdertreversal(node.right));
+      stack.push(node.data);
       stack.push(...this.#inOrdertreversal(node.left));
     }
     if (node.left && !node.right) {
-      stack.push(node);
-
+      stack.push(node.data);
       stack.push(...this.#inOrdertreversal(node.left));
     }
-
-    let data = [];
-    while (stack.length > 0) {
-      let n = stack.pop();
-      if (n.length !== 0) {
-        data.push(n.data);
-        console.log(n.data);
-      }
-
-      if (n.right) {
-        stack.push(...this.#inOrdertreversal(n.right));
-      }
+    if (node.right && !node.left) {
+      stack.push(node.data);
+      stack.push(...this.#inOrdertreversal(node.right));
     }
 
     return stack;
@@ -244,7 +247,7 @@ class Tree {
 
   //inOrder Output
   inOrder() {
-    this.#inOrdertreversal(this.root);
+    console.log(this.#inOrdertreversal(this.root).reverse());
   }
 
   //postOrder       //L R D
@@ -252,38 +255,32 @@ class Tree {
     if (!node) return;
 
     if (!node.right && !node.left) {
-      return [node];
+      return [node.data];
     }
 
     let stack = [];
-    stack.push(node);
 
     if (node.left && node.right) {
+      stack.push(node.data);
+      stack.push(...this.#postOrderTraversal(node.right));
       stack.push(...this.#postOrderTraversal(node.left));
     }
     if (node.left && !node.right) {
+      stack.push(node.data);
       stack.push(...this.#postOrderTraversal(node.left));
     }
     if (node.right && !node.left) {
+      stack.push(node.data);
+
       stack.push(...this.#postOrderTraversal(node.right));
     }
 
-    while (stack.length !== 0) {
-      let n = stack.pop();
-      if (!n.right && n.data) {
-        console.log(n.data);
-      }
-      if (n.right) {
-        stack.push(...this.#postOrderTraversal(n.right));
-        console.log(n.data);
-      }
-    }
     return stack;
   }
 
   //postOrder output
   postOrder() {
-    this.#postOrderTraversal(this.root);
+    console.log(this.#postOrderTraversal(this.root).reverse());
   }
 
   //preOrder traversal  //D L R
@@ -291,28 +288,30 @@ class Tree {
     if (!node) return;
 
     if (!node.left && !node.right) {
-      console.log(node.data);
-      return;
+      return [node.data];
     }
 
+    let stack = [];
+
     if (node.left && node.right) {
-      console.log(node.data);
-      this.#preOrderTraversal(node.left);
-      this.#preOrderTraversal(node.right);
+      stack.push(...this.#preOrderTraversal(node.right));
+      stack.push(...this.#preOrderTraversal(node.left));
+      stack.push(node.data);
     }
     if (node.left && !node.right) {
-      console.log(node.data);
-      this.#preOrderTraversal(node.left);
+      stack.push(...this.#preOrderTraversal(node.left));
+      stack.push(node.data);
     }
     if (!node.left && node.right) {
-      console.log(node.data);
-      this.#preOrderTraversal(node.right);
+      stack.push(...this.#preOrderTraversal(node.right));
+      stack.push(node.data);
     }
+    return stack;
   }
 
   //preOrder
   preOrder() {
-    this.#preOrderTraversal(this.root);
+    console.log(this.#preOrderTraversal(this.root).reverse());
   }
 
   //height
@@ -351,7 +350,7 @@ class Tree {
   }
 
   // check balanced
-  isBalanced(node) {
+  isBalanced(node = this.root) {
     if (node === null) {
       return -1;
     }
@@ -374,31 +373,61 @@ class Tree {
     }
 
     if (Number.isInteger(height) && node === this.root) {
-      return "The tree is balanced 😊";
+      console.log("The tree is balanced 😊");
     }
     if (Number.isInteger(height)) {
       return height;
     }
-    return "The tree is not balanced ⚠️";
+    if (!Number.isInteger(height) && node === this.root) {
+      console.log("The tree is not balanced ⚠️");
+    }
+  }
+
+  //rebalanced the tree
+  rebalance(node = this.root) {
+    let array = this.#inOrdertreversal(node).reverse();
+    // console.log(array);
+    this.root = buildTree(array);
   }
 }
 
-const tree = new Tree(array);
+const array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 
-console.log(tree.isBalanced(tree.root));
+const driver = function () {
+  const tree = new Tree(array);
+  tree.isBalanced();
+  prettyPrint(tree.root);
 
-////Tree printing method
-const prettyPrint = (node, prefix = "", isLeft = true) => {
-  if (node === null) {
-    return;
-  }
-  if (node.right !== null) {
-    prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
-  }
-  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-  if (node.left !== null) {
-    prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
-  }
+  ///
+  console.log("level Order");
+  tree.levelOrder();
+  console.log("preOrder");
+  tree.preOrder();
+  console.log("poseOrder");
+  tree.postOrder();
+  console.log("inOrder");
+  tree.inOrder();
+  //
+  console.log("adding 20 and 21 to tree");
+
+  tree.insert(20);
+  tree.insert(21);
+  //
+  prettyPrint(tree.root);
+  tree.isBalanced();
+  tree.rebalance();
+  tree.isBalanced();
+  //
+  prettyPrint(tree.root);
+  console.log("level Order");
+  tree.levelOrder();
+  console.log("preOrder");
+  tree.preOrder();
+  console.log("poseOrder");
+  tree.postOrder();
+  console.log("inOrder");
+  tree.inOrder();
+  //
 };
 
-prettyPrint(tree.root);
+driver();
